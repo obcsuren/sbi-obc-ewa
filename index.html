@@ -1,73 +1,181 @@
+B Surendra, [03-10-2025 00:17]
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Word Style PDF Generator</title>
+  <title>SBI OBC Association Membership Form</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body style="font-family: Arial, sans-serif; margin: 20px;">
 
-  <h2>Fill Your Details</h2>
+  <h2>SBI OBC Association Membership Application</h2>
   <form id="dataForm">
-    <label>Name:</label><br>
+    <label>Name of Member:</label><br>
     <input type="text" id="name" required><br><br>
 
-    <label>Address:</label><br>
+    <label>Designation:</label><br>
+    <input type="text" id="designation" required><br><br>
+
+    <label>Present Place of Posting:</label><br>
+    <input type="text" id="posting" required><br><br>
+
+    <label>Residential Address:</label><br>
     <textarea id="address" rows="3" required></textarea><br><br>
 
-    <label>Phone:</label><br>
-    <input type="text" id="phone" required><br><br>
+    <label>Email ID:</label><br>
+    <input type="email" id="email" required><br><br>
+
+    <label>HRMS ID:</label><br>
+    <input type="text" id="hrms" required><br><br>
+
+    <label>Caste:</label><br>
+    <input type="text" id="caste" required><br><br>
+
+    <label>Branch/Department:</label><br>
+    <input type="text" id="branch" required><br><br>
+
+    <label>Mobile No:</label><br>
+    <input type="text" id="mobile" required><br><br>
+
+    <label>Account No:</label><br>
+    <input type="text" id="account" required><br><br>
+
+    <label>Monthly Subscription Amount (Rs.):</label><br>
+    <input type="text" id="subscription" required><br><br>
 
     <button type="submit">Generate PDF</button>
   </form>
 
   <script>
-    document.getElementById("dataForm").addEventListener("submit", function(e) {
+    document.getElementById("dataForm").addEventListener("submit", async function(e) {
       e.preventDefault();
 
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({
-        unit: "pt",   // points for better formatting
-        format: "a4"  // standard page size
-      });
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+      // Load logo
+      const logo = new Image();
+      logo.src = "logo.png"; // make sure logo.png is in same repo
+      await new Promise(r => { logo.onload = r; });
+
+      // Function to draw header
+      function addHeader(doc) {
+        doc.addImage(logo, "PNG", 50, 15, 50, 50);
+        doc.setFont("times", "bold");
+        doc.setFontSize(14);
+        doc.text("SBI OBC Employees’ Welfare Association", 120, 40);
+        doc.setFont("times", "normal");
+        doc.setFontSize(10);
+        doc.text("Hyderabad Circle, Opposite Charmas, Gunfoundry, Hyderabad - 1", 120, 55);
+        doc.text("Tel & Fax No: 040-23382861", 120, 70);
+        doc.line(50, 80, 550, 80); // underline
+      }
 
       // Collect data
       let name = document.getElementById("name").value;
+      let designation = document.getElementById("designation").value;
+      let posting = document.getElementById("posting").value;
       let address = document.getElementById("address").value;
-      let phone = document.getElementById("phone").value;
+      let email = document.getElementById("email").value;
+      let hrms = document.getElementById("hrms").value;
+      let caste = document.getElementById("caste").value;
+      let branch = document.getElementById("branch").value;
+      let mobile = document.getElementById("mobile").value;
+      let account = document.getElementById("account").value;
+      let subscription = document.getElementById("subscription").value;
 
-      // Page styling
-      let leftMargin = 50;
-      let topMargin = 60;
-      let lineHeight = 20;
+      // -------------------
+      // Page 1: Application
+      // -------------------
+      addHeader(doc);
+
+      doc.setFont("times", "bold");
+      doc.setFontSize(16);
+      doc.text("APPLICATION FOR MEMBERSHIP", 180, 120);
 
       doc.setFont("times", "normal");
-      doc.setFontSize(14);
-
-      // Example Word-style content
-      let y = topMargin;
-      doc.text("STATE BANK OF INDIA", leftMargin, y);
       doc.setFontSize(12);
-      y += lineHeight * 2;
+      doc.text("To,", 50, 160);
+      doc.text("The General Secretary,", 50, 180);
+      doc.text("SBI OBC Employees’ Welfare Association,", 50, 200);
+      doc.text("Hyderabad Circle.", 50, 220);
 
-      doc.text("Dear " + name + ",", leftMargin, y);
-      y += lineHeight * 2;
+      doc.text("Dear Sir,", 50, 260);
+      doc.text("I request you to enroll me as a member of the Association and shall abide by the rules.", 50, 280);
+      doc.autoTable({
+        startY: 310,
+        head: [['Field', 'Details']],
+        body: [
+          ['Name of the Member', name],
+          ['Designation', designation],
+          ['Present Place of Posting', posting],
+          ['Residential Address', address],
+          ['Email ID', email],
+          ['HRMS ID', hrms],
+          ['Caste', caste],
+          ['Branch/Department', branch],
+          ['Mobile No', mobile],
+          ['Account No', account],
+        ],
+        theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 5 },
+        headStyles: { fillColor: [200, 200, 200] }
+      });
 
-      let message = We are happy to inform you that your address is recorded as:\n${address}\n\nFor future contact, please confirm your phone number: ${phone}.;
-      let splitMessage = doc.splitTextToSize(message, 500); // wrap text to 500px width
-      doc.text(splitMessage, leftMargin, y);
-      y += splitMessage.length * lineHeight + lineHeight;
+      let finalY = doc.lastAutoTable.finalY + 40;
+      doc.text("Yours faithfully,", 50, finalY);
+      doc.text("(Signature of the Member)", 350, finalY + 20);
 
-      doc.text("Thank you,", leftMargin, y);
-      y += lineHeight;
-      doc.text("Association Team", leftMargin, y);
+      // -------------------
+      // Page 2: Authorization
+      // -------------------
+      doc.addPage();
+      addHeader(doc);
 
-      // Footer
-      doc.setFontSize(10);
-      doc.text("Generated automatically by SBI OBC Employees Welfare Association", leftMargin, 800);
+      doc.setFont("times", "bold");
+      doc.setFontSize(16);
+      doc.text("AUTHORISATION FOR DEDUCTION", 160, 120);
 
-      // Download file
-      doc.save("Letter_" + name + ".pdf");
+      doc.setFont("times", "normal");
+      doc.setFontSize(12);
+      doc.text("To,", 50, 160);
+      doc.text("The Branch/Chief/Asst. General Manager,", 50, 180);
+      doc.text("State Bank of India,", 50, 200);
+      doc.text(branch + " Branch,", 50, 220);
+
+      doc.text("Dear Sir,", 50, 260);
+      let authText = I request you to deduct from my salary and allowances every month a sum of Rs.${subscription} 
+(Rupees ${subscription} only) towards monthly subscription to the SBI OBC Employees Welfare Association, Hyderabad Circle 
+and credit the same to Current Account No.36933812745 maintained at Gunfoundry Branch, Hyderabad. 
+Please treat this as a Standing Instruction.;
+      let splitAuth = doc.splitTextToSize(authText, 500);
+      doc.text(splitAuth, 50, 290);
+
+      doc.autoTable({
+        startY: 390,
+        head: [['Field', 'Details']],
+        body: [
+          ['Name of the Member', name],
+          ['Designation', designation],
+          ['HRMS ID', hrms],
+          ['Branch/Department', branch],
+          ['Mobile No', mobile],
+          ['Account No', account]
+        ],
+        theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 5 },
+        headStyles: { fillColor: [200, 200, 200] }
+      });
+
+      let authFinalY = doc.lastAutoTable.finalY + 40;
+      doc.text("Yours faithfully,", 50, authFinalY);
+      doc.text("(Signature of the Member)", 350, authFinalY + 20);
+
+      // -------------------
+      // Save Final PDF
+      // -------------------
+      doc.save("Membership_Application_" + name + ".pdf");
     });
   </script>
 
