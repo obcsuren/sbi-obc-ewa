@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Word Style PDF Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 20px;">
+
+  <h2>Fill Your Details</h2>
+  <form id="dataForm">
+    <label>Name:</label><br>
+    <input type="text" id="name" required><br><br>
+
+    <label>Address:</label><br>
+    <textarea id="address" rows="3" required></textarea><br><br>
+
+    <label>Phone:</label><br>
+    <input type="text" id="phone" required><br><br>
+
+    <button type="submit">Generate PDF</button>
+  </form>
+
+  <script>
+    document.getElementById("dataForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        unit: "pt",   // points for better formatting
+        format: "a4"  // standard page size
+      });
+
+      // Collect data
+      let name = document.getElementById("name").value;
+      let address = document.getElementById("address").value;
+      let phone = document.getElementById("phone").value;
+
+      // Page styling
+      let leftMargin = 50;
+      let topMargin = 60;
+      let lineHeight = 20;
+
+      doc.setFont("times", "normal");
+      doc.setFontSize(14);
+
+      // Example Word-style content
+      let y = topMargin;
+      doc.text("STATE BANK OF INDIA", leftMargin, y);
+      doc.setFontSize(12);
+      y += lineHeight * 2;
+
+      doc.text("Dear " + name + ",", leftMargin, y);
+      y += lineHeight * 2;
+
+      let message = We are happy to inform you that your address is recorded as:\n${address}\n\nFor future contact, please confirm your phone number: ${phone}.;
+      let splitMessage = doc.splitTextToSize(message, 500); // wrap text to 500px width
+      doc.text(splitMessage, leftMargin, y);
+      y += splitMessage.length * lineHeight + lineHeight;
+
+      doc.text("Thank you,", leftMargin, y);
+      y += lineHeight;
+      doc.text("Association Team", leftMargin, y);
+
+      // Footer
+      doc.setFontSize(10);
+      doc.text("Generated automatically by SBI OBC Employees Welfare Association", leftMargin, 800);
+
+      // Download file
+      doc.save("Letter_" + name + ".pdf");
+    });
+  </script>
+
+</body>
+</html>
