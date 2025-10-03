@@ -55,20 +55,29 @@
 
       // Load logo
       const logo = new Image();
-      logo.src = "logo.png"; // make sure logo.png is in same repo
+      logo.src = "logo.png"; // must be in repo
       await new Promise(r => { logo.onload = r; });
 
-      // Function to draw header
+      // Header function
       function addHeader(doc) {
-        doc.addImage(logo, "PNG", 50, 15, 50, 50);
+        doc.addImage(logo, "PNG", 50, 20, 60, 60);
         doc.setFont("times", "bold");
         doc.setFontSize(14);
-        doc.text("SBI OBC Employees’ Welfare Association", 120, 40);
+        doc.text("SBI OBC Employees’ Welfare Association", 300, 40, { align: "center" });
         doc.setFont("times", "normal");
         doc.setFontSize(10);
-        doc.text("Hyderabad Circle, Opposite Charmas, Gunfoundry, Hyderabad - 1", 120, 55);
-        doc.text("Tel & Fax No: 040-23382861", 120, 70);
-        doc.line(50, 80, 550, 80); // underline
+        doc.text("Hyderabad Circle, Opposite Charmas, Gunfoundry, Hyderabad - 1", 300, 55, { align: "center" });
+        doc.text("Tel & Fax No: 040-23382861", 300, 70, { align: "center" });
+        doc.line(50, 90, 550, 90);
+      }
+
+      // Footer function
+      function addFooter(doc, pageNumber) {
+        let pageHeight = doc.internal.pageSize.height;
+        doc.setFont("times", "italic");
+        doc.setFontSize(9);
+        doc.text("SBI OBC Employees’ Welfare Association – Hyderabad Circle", 300, pageHeight - 20, { align: "center" });
+        doc.text("Page " + pageNumber, 550, pageHeight - 20);
       }
 
       // Collect data
@@ -91,8 +100,7 @@
 
       doc.setFont("times", "bold");
       doc.setFontSize(16);
-      doc.text("APPLICATION FOR MEMBERSHIP", 180, 120);
-
+      doc.text("APPLICATION FOR MEMBERSHIP", 300, 130, { align: "center" });
       doc.setFont("times", "normal");
       doc.setFontSize(12);
       doc.text("To,", 50, 160);
@@ -102,6 +110,7 @@
 
       doc.text("Dear Sir,", 50, 260);
       doc.text("I request you to enroll me as a member of the Association and shall abide by the rules.", 50, 280);
+
       doc.autoTable({
         startY: 310,
         head: [['Field', 'Details']],
@@ -126,6 +135,8 @@
       doc.text("Yours faithfully,", 50, finalY);
       doc.text("(Signature of the Member)", 350, finalY + 20);
 
+      addFooter(doc, 1);
+
       // -------------------
       // Page 2: Authorization
       // -------------------
@@ -134,7 +145,7 @@
 
       doc.setFont("times", "bold");
       doc.setFontSize(16);
-      doc.text("AUTHORISATION FOR DEDUCTION", 160, 120);
+      doc.text("AUTHORISATION FOR DEDUCTION", 300, 130, { align: "center" });
 
       doc.setFont("times", "normal");
       doc.setFontSize(12);
@@ -170,6 +181,8 @@ Please treat this as a Standing Instruction.;
       let authFinalY = doc.lastAutoTable.finalY + 40;
       doc.text("Yours faithfully,", 50, authFinalY);
       doc.text("(Signature of the Member)", 350, authFinalY + 20);
+
+      addFooter(doc, 2);
 
       // -------------------
       // Save Final PDF
